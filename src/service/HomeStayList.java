@@ -81,39 +81,46 @@ public class HomeStayList {
      */
     private HomeStay parseHomeStay(String line) {
         try {
-            // Skip empty lines
-            if (line == null || line.trim().isEmpty()) {
+            if (line == null) return null;
+
+            // Loại bỏ BOM nếu có (trường hợp file UTF-8 BOM)
+            if (line.startsWith("\uFEFF")) {
+                line = line.substring(1);
+            }
+
+            line = line.trim();
+            if (line.isEmpty()) {
                 return null;
             }
 
             /*
-             * Dùng regex để parse để tránh lỗi vì dấu '-' trong address.
+             * Định dạng file:
+             *   HS0001-Alee DaLat Homestay-3-12A/6 ...-15
+             *   ID - Name - Rooms - Address - Capacity
              *
-             * Định dạng mong muốn (rất linh hoạt khoảng trắng):
-             *  HS0001-Name-3-Address-15
-             *
-             * Regex:
-             *  ^\s*(HS\d+)\s*-(.+?)\s*-(\d+)\s*-(.+)\s*-(\d+)\s*$
-             *  group 1: ID
-             *  group 2: Name
-             *  group 3: Rooms (số)
-             *  group 4: Address (cho phép mọi ký tự, kể cả '-')
-             *  group 5: Capacity (số)
+             * Address có thể chứa dấu '-', nên ta dùng split với limit = 5
+             * để luôn thu được đúng 5 phần:
+             *   0: ID
+             *   1: Name
+             *   2: Rooms
+             *   3: Address (có thể còn '-')
+             *   4: Capacity
              */
 
-            Pattern p = Pattern.compile("^\\s*(HS\\d+)\\s*-(.+?)\\s*-(\\d+)\\s*-(.+)\\s*-(\\d+)\\s*$");
-            Matcher m = p.matcher(line);
-
-            if (!m.matches()) {
-                System.out.println(" Failed to parse line (regex not match): " + line);
+            String[] parts = line.split("-", 5);
+            if (parts.length != 5) {
+                System.out.println(" Failed to parse line (parts != 5): " + line);
                 return null;
             }
 
-            String homeID = m.group(1).trim();
-            String homeName = m.group(2).trim();
-            int roomNumber = Integer.parseInt(m.group(3).trim());
-            String address = m.group(4).trim();
-            int maxCapacity = Integer.parseInt(m.group(5).trim());
+            String homeID = parts[0].trim();
+            String homeName = parts[1].trim();
+            String roomStr = parts[2].trim();
+            String address = parts[3].trim();
+            String capacityStr = parts[4].trim();
+
+            int roomNumber = Integer.parseInt(roomStr);
+            int maxCapacity = Integer.parseInt(capacityStr);
 
             System.out.println(" Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
             return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
