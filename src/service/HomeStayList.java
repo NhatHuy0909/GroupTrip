@@ -127,19 +127,21 @@ public class HomeStayList {
             String address = parts[3].trim();
             String capacityStr = parts[4].trim();
 
-            // Kiểm tra và parse số phòng
-            if (!roomStr.matches("\\d+")) {
+            // Làm sạch chuỗi số: loại mọi ký tự không phải digit (xử lý luôn trường hợp file UTF-16 bị đọc sai thành "1 5", "1\u00005", ...)
+            String roomDigits = roomStr.replaceAll("\\D", "");
+            String capacityDigits = capacityStr.replaceAll("\\D", "");
+
+            if (roomDigits.isEmpty()) {
                 System.out.println(" Failed to parse roomNumber from '" + roomStr + "' in line: " + line);
                 return null;
             }
-            int roomNumber = Integer.parseInt(roomStr);
-
-            // Kiểm tra và parse sức chứa
-            if (!capacityStr.matches("\\d+")) {
+            if (capacityDigits.isEmpty()) {
                 System.out.println(" Failed to parse capacity from '" + capacityStr + "' in line: " + line);
                 return null;
             }
-            int maxCapacity = Integer.parseInt(capacityStr);
+
+            int roomNumber = Integer.parseInt(roomDigits);
+            int maxCapacity = Integer.parseInt(capacityDigits);
 
             System.out.println(" Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
             return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
