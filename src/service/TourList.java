@@ -91,6 +91,14 @@ public class TourList {
             System.out.println("Tour ID already exists!");
             return false;
         }
+        if (!Validation.isValidTourName(tour.getTourName())) {
+            System.out.println("Tour name cannot be empty!");
+            return false;
+        }
+        if (!Validation.isValidTime(tour.getTime())) {
+            System.out.println("Tour duration/time cannot be empty!");
+            return false;
+        }
         if (!Validation.isValidPrice(tour.getPrice())) {
             System.out.println("Price must be positive!");
             return false;
@@ -166,6 +174,19 @@ public class TourList {
 
         System.out.println("Tour updated successfully!");
         return true;
+    }
+
+    /**
+     * Update booking field of a tour
+     * Used when booking is added or deleted
+     */
+    public boolean updateTourBooking(String tourID, boolean booking) {
+        Tour tour = getTourByID(tourID);
+        if (tour != null) {
+            tour.setBooking(booking);
+            return true;
+        }
+        return false;
     }
 
     /**

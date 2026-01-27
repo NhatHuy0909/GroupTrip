@@ -33,6 +33,12 @@ public class MainController {
      * Main run method - Program entry point
      */
     public void run() {
+        // Requirement 1: Validate mandatory files exist
+        if (!checkRequiredFiles()) {
+            System.out.println("Error: Cannot start application without required data files!");
+            return;
+        }
+        
         System.out.println("=== GroupTrip Management System ===");
         int choice;
         while (true) {
@@ -49,13 +55,35 @@ public class MainController {
                     homestayMenu();
                     break;
                 case 4:
-                    saveAllData();
-                    System.out.println("Exiting...");
+                    exitWithSavePrompt();
                     return;
                 default:
                     System.out.println("Invalid choice! Please try again.");
             }
         }
+    }
+
+    /**
+     * Check if required data files exist
+     */
+    private boolean checkRequiredFiles() {
+        java.io.File homestaysFile = new java.io.File("Homestays.txt");
+        java.io.File toursFile = new java.io.File("Tours.txt");
+        java.io.File bookingsFile = new java.io.File("Bookings.txt");
+        
+        boolean allExist = homestaysFile.exists() && toursFile.exists() && bookingsFile.exists();
+        
+        if (!homestaysFile.exists()) {
+            System.out.println("Missing required file: Homestays.txt");
+        }
+        if (!toursFile.exists()) {
+            System.out.println("Missing required file: Tours.txt");
+        }
+        if (!bookingsFile.exists()) {
+            System.out.println("Missing required file: Bookings.txt");
+        }
+        
+        return allExist;
     }
 
     /**
@@ -154,7 +182,7 @@ public class MainController {
         Tour tour = tourList.getTourByID(tourID);
 
         if (tour == null) {
-            System.out.println("Tour not found!");
+            System.out.println("This tour does not exist!");
             return;
         }
 
@@ -356,7 +384,10 @@ public class MainController {
         String phone = Validation.getStringInput(scanner, "Phone Number (10 digits): ");
 
         Booking booking = new Booking(bookingID, fullName, tourID, bookingDate, phone);
-        bookingList.addBooking(booking, tourList);
+        if (bookingList.addBooking(booking, tourList)) {
+            // Requirement 6: Update tour booking field to true
+            tourList.updateTourBooking(tourID, true);
+        }
     }
 
     /**
@@ -368,7 +399,7 @@ public class MainController {
         Booking booking = bookingList.getBookingByID(bookingID);
 
         if (booking == null) {
-            System.out.println("Booking not found!");
+            System.out.println("This Booking does not exist!");
             return;
         }
 
@@ -393,7 +424,21 @@ public class MainController {
     private void deleteBooking() {
         System.out.println("\n===== DELETE BOOKING =====");
         String bookingID = Validation.getStringInput(scanner, "Enter Booking ID: ");
-        bookingList.deleteBooking(bookingID);
+        
+        // Requirement 8: Check if booking exists and handle tour field update
+        Booking booking = bookingList.getBookingByID(bookingID);
+        if (booking == null) {
+            System.out.println("This booking does not exist!");
+            return;
+        }
+        
+        String tourID = booking.getTourID();
+        if (bookingList.deleteBooking(bookingID)) {
+            // Check if there are remaining bookings for this tour
+            if (bookingList.getTotalBookingsForTour(tourID) == 0) {
+                tourList.updateTourBooking(tourID, false);
+            }
+        }
     }
 
     /**
@@ -476,5 +521,18 @@ public class MainController {
         tourList.saveToFile();
         bookingList.saveToFile();
         System.out.println("All data saved successfully!");
+    }
+
+    /**
+     * Requirement 11: Prompt user to save before exiting
+     */
+    private void exitWithSavePrompt() {
+        System.out.println("\n===== EXIT PROGRAM =====");
+        String choice = Validation.getStringInput(scanner, "Save changes before exiting? (yes/no): ");
+        
+        if (choice.equalsIgnoreCase("yes") || choice.equalsIgnoreCase("y")) {
+            saveAllData();
+        }
+        System.out.println("Exiting...");
     }
 }

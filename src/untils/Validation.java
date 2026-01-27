@@ -64,10 +64,10 @@ public class Validation {
     }
 
     /**
-     * Validate Booking ID format (BK001)
+     * Validate Booking ID format (B00000 - 5 digits)
      */
     public static boolean isValidBookingID(String id) {
-        return id != null && id.matches("^BK\\d{4}$");
+        return id != null && id.matches("^B\\d{5}$");
     }
 
     /**
@@ -82,6 +82,20 @@ public class Validation {
      */
     public static boolean isValidName(String name) {
         return name != null && !name.trim().isEmpty() && name.matches("^[a-zA-Z\\s]+$");
+    }
+
+    /**
+     * Validate tour name (cannot be empty)
+     */
+    public static boolean isValidTourName(String tourName) {
+        return tourName != null && !tourName.trim().isEmpty();
+    }
+
+    /**
+     * Validate time/duration (cannot be empty)
+     */
+    public static boolean isValidTime(String time) {
+        return time != null && !time.trim().isEmpty();
     }
 
     /**
@@ -120,10 +134,10 @@ public class Validation {
     }
 
     /**
-     * Validate that booking date <= departure date
+     * Validate that booking date < departure date (strictly before)
      */
     public static boolean isValidBookingDate(LocalDate bookingDate, LocalDate departureDate) {
-        return bookingDate != null && departureDate != null && !bookingDate.isAfter(departureDate);
+        return bookingDate != null && departureDate != null && bookingDate.isBefore(departureDate);
     }
 
     /**
