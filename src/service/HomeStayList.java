@@ -52,12 +52,17 @@ public class HomeStayList {
 
     /**
      * Parse a line into HomeStay object using regex
-     * Format: HS0001-Alee DaLat Homestay-3-Address...-15
+     * Format: HS0001-Name-Rooms-Address-Capacity
      */
     private HomeStay parseHomeStay(String line) {
         try {
-            // Regex: ID-Name-RoomNumber(1-2 digits)-Address(can have dashes)-Capacity(1-2 digits)
-            Pattern pattern = Pattern.compile("^(HS\\d+)-(.+?)-(\\d+)-(.+)-(\\d{1,2})$");
+            // Skip empty lines
+            if (line == null || line.trim().isEmpty()) {
+                return null;
+            }
+            
+            // Regex: ID-Name-RoomNumber(digits)-Address(greedy, can have dashes)-Capacity(1-2 digits at end)
+            Pattern pattern = Pattern.compile("^(HS\\d+)-(.+?)-(\\d+)-(.+)-(\\d{1,2})\\s*$");
             Matcher matcher = pattern.matcher(line);
             
             if (matcher.matches()) {
