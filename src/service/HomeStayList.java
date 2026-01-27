@@ -31,7 +31,31 @@ public class HomeStayList {
      * Format: HS0001-Alee DaLat Homestay-3-Address-15
      */
     public void loadFromFile() {
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+        // Try multiple paths
+        File file = null;
+        String[] possiblePaths = {
+            FILE_PATH,
+            "../" + FILE_PATH,
+            "../../" + FILE_PATH,
+            System.getProperty("user.dir") + "/" + FILE_PATH
+        };
+        
+        for (String path : possiblePaths) {
+            File f = new File(path);
+            if (f.exists()) {
+                file = f;
+                System.out.println("Found file at: " + f.getAbsolutePath());
+                break;
+            }
+        }
+        
+        if (file == null) {
+            System.out.println("File not found: " + FILE_PATH);
+            System.out.println("Current directory: " + System.getProperty("user.dir"));
+            return;
+        }
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 line = line.trim();
