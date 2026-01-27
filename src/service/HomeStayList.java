@@ -55,25 +55,42 @@ public class HomeStayList {
     private HomeStay parseHomeStay(String line) {
         try {
             String[] parts = line.split("-");
-            if (parts.length >= 5) {
-                String homeID = parts[0].trim();
-                String homeName = parts[1].trim();
-                int roomNumber = Integer.parseInt(parts[2].trim());
-                int maxCapacity = Integer.parseInt(parts[parts.length - 1].trim());
-                
-                StringBuilder addressBuilder = new StringBuilder();
-                for (int i = 3; i < parts.length - 1; i++) {
-                    if (i > 3) addressBuilder.append("-");
-                    addressBuilder.append(parts[i]);
-                }
-                String address = addressBuilder.toString().trim();
-                
-                return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
+            if (parts.length < 5) {
+                System.out.println("Error: Not enough parts (got " + parts.length + "). Line: " + line);
+                return null;
             }
+            
+            String homeID = parts[0].trim();
+            String homeName = parts[1].trim();
+            
+            int roomNumber;
+            try {
+                roomNumber = Integer.parseInt(parts[2].trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Invalid room number '" + parts[2].trim() + "'. Line: " + line);
+                return null;
+            }
+            
+            int maxCapacity;
+            try {
+                maxCapacity = Integer.parseInt(parts[parts.length - 1].trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Invalid capacity '" + parts[parts.length - 1].trim() + "'. Line: " + line);
+                return null;
+            }
+            
+            StringBuilder addressBuilder = new StringBuilder();
+            for (int i = 3; i < parts.length - 1; i++) {
+                if (i > 3) addressBuilder.append("-");
+                addressBuilder.append(parts[i]);
+            }
+            String address = addressBuilder.toString().trim();
+            
+            return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
         } catch (Exception e) {
-            System.out.println("Error parsing line: " + line);
+            System.out.println("Error parsing line: " + line + " - " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     /**
