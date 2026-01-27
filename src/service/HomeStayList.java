@@ -186,30 +186,30 @@ public class HomeStayList {
             System.out.println("No homestays found!");
             return;
         }
-        
+
         System.out.println("\n===== ALL HOMESTAYS =====");
-        
-        // Thiết kế bảng gọn lại, tránh quá dài và bị chèn chữ
-        String headerFormat = "%-7s %-25s %-5s %-40s %-4s";
-        String rowFormat    = "%-7s %-25s %-5d %-40s %-4d";
-        
-        System.out.println(String.format(headerFormat,
-                "ID", "Name", "Rm", "Address", "Cap"));
-        System.out.println("----------------------------------------------------------------------------");
-        
+
+        // In kiểu đơn giản, giữa các cột chỉ có vài dấu cách / dấu |
+        System.out.println("ID     | Name                     | Rm | Address                               | Cap");
+        System.out.println("--------------------------------------------------------------------------------------");
+
         for (HomeStay hs : homeStays) {
             String address = hs.getAddress();
-            // Nếu địa chỉ quá dài thì cắt bớt cho đỡ tràn dòng
-            if (address.length() > 40) {
-                address = address.substring(0, 37) + "...";
+            if (address.length() > 35) {
+                address = address.substring(0, 32) + "...";
             }
-            
-            System.out.println(String.format(rowFormat,
+
+            String name = hs.getHomeName();
+            if (name.length() > 23) {
+                name = name.substring(0, 20) + "...";
+            }
+
+            System.out.printf("%-6s | %-23s | %2d | %-35s | %3d%n",
                     hs.getHomeID(),
-                    hs.getHomeName(),
+                    name,
                     hs.getRoomNumber(),
                     address,
-                    hs.getMaximumCapacity()));
+                    hs.getMaximumCapacity());
         }
     }
 
