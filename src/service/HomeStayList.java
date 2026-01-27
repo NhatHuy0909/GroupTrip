@@ -54,8 +54,25 @@ public class HomeStayList {
      */
     private HomeStay parseHomeStay(String line) {
         try {
-            String[] parts = line.split("-");
-            if (parts.length < 5) {
+            int lastDashIdx = line.lastIndexOf("-");
+            if (lastDashIdx < 0) {
+                System.out.println("Error: No dash found. Line: " + line);
+                return null;
+            }
+            
+            String maxCapacityStr = line.substring(lastDashIdx + 1).trim();
+            int maxCapacity;
+            try {
+                maxCapacity = Integer.parseInt(maxCapacityStr);
+            } catch (NumberFormatException e) {
+                System.out.println("Error: Invalid capacity '" + maxCapacityStr + "'. Line: " + line);
+                return null;
+            }
+            
+            String beforeCapacity = line.substring(0, lastDashIdx);
+            String[] parts = beforeCapacity.split("-");
+            
+            if (parts.length < 4) {
                 System.out.println("Error: Not enough parts (got " + parts.length + "). Line: " + line);
                 return null;
             }
@@ -71,16 +88,8 @@ public class HomeStayList {
                 return null;
             }
             
-            int maxCapacity;
-            try {
-                maxCapacity = Integer.parseInt(parts[parts.length - 1].trim());
-            } catch (NumberFormatException e) {
-                System.out.println("Error: Invalid capacity '" + parts[parts.length - 1].trim() + "'. Line: " + line);
-                return null;
-            }
-            
             StringBuilder addressBuilder = new StringBuilder();
-            for (int i = 3; i < parts.length - 1; i++) {
+            for (int i = 3; i < parts.length; i++) {
                 if (i > 3) addressBuilder.append("-");
                 addressBuilder.append(parts[i]);
             }
