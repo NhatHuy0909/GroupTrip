@@ -83,7 +83,7 @@ public class HomeStayList {
         try {
             if (line == null) return null;
 
-            // Loại bỏ BOM nếu có (trường hợp file UTF-8 BOM)
+            // Loại bỏ BOM nếu có (trường hợp file UTF-8 BOM hoặc đọc sai encoding)
             if (line.startsWith("\uFEFF")) {          // BOM chuẩn
                 line = line.substring(1);
             } else if (line.startsWith("ï»¿")) {      // BOM bị đọc sai encoding (thành 3 ký tự)
@@ -93,6 +93,12 @@ public class HomeStayList {
             line = line.trim();
             if (line.isEmpty()) {
                 return null;
+            }
+
+            // Nếu còn ký tự rác trước "HS", cắt bỏ luôn cho chắc
+            int idxHS = line.indexOf("HS");
+            if (idxHS > 0) {
+                line = line.substring(idxHS);
             }
 
             /*
@@ -121,7 +127,18 @@ public class HomeStayList {
             String address = parts[3].trim();
             String capacityStr = parts[4].trim();
 
+            // Kiểm tra và parse số phòng
+            if (!roomStr.matches("\\d+")) {
+                System.out.println(" Failed to parse roomNumber from '" + roomStr + "' in line: " + line);
+                return null;
+            }
             int roomNumber = Integer.parseInt(roomStr);
+
+            // Kiểm tra và parse sức chứa
+            if (!capacityStr.matches("\\d+")) {
+                System.out.println(" Failed to parse capacity from '" + capacityStr + "' in line: " + line);
+                return null;
+            }
             int maxCapacity = Integer.parseInt(capacityStr);
 
             System.out.println(" Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
