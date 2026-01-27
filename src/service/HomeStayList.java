@@ -53,6 +53,7 @@ public class HomeStayList {
     /**
      * Parse a line into HomeStay object using regex
      * Format: HS0001-Name-Rooms-Address-Capacity
+     * Note: Address can contain dashes (like "Sub-district")
      */
     private HomeStay parseHomeStay(String line) {
         try {
@@ -61,8 +62,9 @@ public class HomeStayList {
                 return null;
             }
             
-            // Regex: ID-Name-RoomNumber(digits)-Address(greedy, can have dashes)-Capacity(1-2 digits at end)
-            Pattern pattern = Pattern.compile("^(HS\\d+)-(.+?)-(\\d+)-(.+)-(\\d{1,2})\\s*$");
+            // Regex with negative lookahead: address is everything before the LAST dash+numbers
+            // This prevents "Sub-district" from being treated as a separator
+            Pattern pattern = Pattern.compile("^(HS\\d+)-(.+?)-(\\d+)-((?:(?!-\\d{1,2}$).)+)-(\\d{1,2})$");
             Matcher matcher = pattern.matcher(line);
             
             if (matcher.matches()) {
@@ -71,10 +73,13 @@ public class HomeStayList {
                 int roomNumber = Integer.parseInt(matcher.group(3).trim());
                 String address = matcher.group(4).trim();
                 int maxCapacity = Integer.parseInt(matcher.group(5).trim());
+                System.out.println("✓ Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
                 return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
+            } else {
+                System.out.println("✗ Failed to parse: " + line);
             }
         } catch (Exception e) {
-            System.out.println("Error parsing line: " + line);
+            System.out.println("Error parsing line: " + line + " - " + e.getMessage());
         }
         return null;
     }
