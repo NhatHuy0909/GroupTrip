@@ -213,7 +213,6 @@ public class MainController {
             System.out.println("Tour found:");
             System.out.println(String.format("%-8s %-20s %-15s %-8s %-8s %-12s %-12s %-8s",
                     "ID", "Tour", "Duration", "Price", "Home ID", "Start", "End", "Seats"));
-            System.out.println("-".repeat(90));
             System.out.println(String.format("%-8s %-20s %-15s %-8.0f %-8s %-12s %-12s %-8d",
                     tour.getTourID(), tour.getTourName(), tour.getTime(), tour.getPrice(),
                     tour.getHomeID(), DateUtils.formatDate(tour.getDepartureDate()),
@@ -240,7 +239,6 @@ public class MainController {
         System.out.println("Tours with departure date <= " + DateUtils.formatDate(today) + ":");
         System.out.println(String.format("%-8s %-20s %-15s %-8s %-8s %-12s %-12s %-8s",
                 "ID", "Tour", "Duration", "Price", "Home ID", "Start", "End", "Seats"));
-        System.out.println("-".repeat(90));
         for (Tour tour : earlierTours) {
             System.out.println(String.format("%-8s %-20s %-15s %-8.0f %-8s %-12s %-12s %-8d",
                     tour.getTourID(), tour.getTourName(), tour.getTime(), tour.getPrice(),
@@ -267,7 +265,6 @@ public class MainController {
         System.out.println("Tours departing after " + DateUtils.formatDate(today) + " (sorted by total booking amount):");
         System.out.println(String.format("%-8s %-20s %-12s %-12s %-15s %-10s",
                 "ID", "Tour", "Start Date", "Price", "Total Bookings", "Amount"));
-        System.out.println("-".repeat(85));
 
         // Create list of tours with booking amounts
         ArrayList<TourBookingAmount> tourAmounts = new ArrayList<>();
@@ -290,7 +287,6 @@ public class MainController {
                     tour.getPrice(), ta.bookingCount, ta.totalAmount));
             grandTotal += ta.totalAmount;
         }
-        System.out.println("-".repeat(85));
         System.out.println(String.format("%71s %-10.0f", "GRAND TOTAL:", grandTotal));
     }
 
@@ -453,7 +449,6 @@ public class MainController {
             System.out.println("Booking found:");
             System.out.println(String.format("%-10s %-20s %-10s %-12s %-12s",
                     "Booking ID", "Full Name", "Tour ID", "Booking Date", "Phone"));
-            System.out.println("-".repeat(70));
             System.out.println(String.format("%-10s %-20s %-10s %-12s %-12s",
                     booking.getBookingID(), booking.getFullName(), booking.getTourID(),
                     DateUtils.formatDate(booking.getBookingDate()), booking.getPhone()));
@@ -481,7 +476,6 @@ public class MainController {
 
         System.out.println(String.format("%-10s %-30s %-20s",
                 "HomeStay ID", "HomeStay Name", "Total Tourists"));
-        System.out.println("-".repeat(60));
 
         int grandTotalTourists = 0;
         for (HomeStay homeStay : homeStayList.getAll()) {
@@ -501,7 +495,6 @@ public class MainController {
             grandTotalTourists += totalTourists;
         }
 
-        System.out.println("-".repeat(60));
         System.out.println(String.format("%-10s %-30s %-20d", "", "TOTAL", grandTotalTourists));
     }
 

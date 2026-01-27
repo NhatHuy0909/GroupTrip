@@ -7,6 +7,8 @@ package service;
 import model.HomeStay;
 import java.io.*;
 import java.util.*;
+import model.Booking;
+import model.Tour;
 
 /**
  * HomeStayList - Manages HomeStay data from file
@@ -104,7 +106,6 @@ public class HomeStayList {
         }
         System.out.println(String.format("%-8s %-30s %-5s %-50s %-5s",
                 "ID", "Name", "Rooms", "Address", "Cap"));
-        System.out.println("-".repeat(100));
         for (HomeStay hs : homeStays) {
             System.out.println(String.format("%-8s %-30s %-5d %-50s %-5d",
                     hs.getHomeID(),
@@ -128,7 +129,6 @@ public class HomeStayList {
         
         System.out.println(String.format("%-8s %-30s %-12s",
                 "Homestay ID", "Homestay Name", "Total Tourists"));
-        System.out.println("-".repeat(55));
         
         int grandTotal = 0;
         
@@ -154,7 +154,6 @@ public class HomeStayList {
             grandTotal += totalTourists;
         }
         
-        System.out.println("-".repeat(55));
         System.out.println(String.format("%-8s %-30s %-12d",
                 "TOTAL", "", grandTotal));
     }

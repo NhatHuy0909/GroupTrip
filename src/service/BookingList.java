@@ -10,6 +10,7 @@ import untils.DateUtils;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
+import model.Tour;
 
 public class BookingList {
     private ArrayList<Booking> bookings;
@@ -189,7 +190,6 @@ public class BookingList {
         }
         System.out.println(String.format("%-10s %-20s %-10s %-12s %-12s",
                 "Booking ID", "Full Name", "Tour ID", "Booking Date", "Phone"));
-        System.out.println("-".repeat(70));
         for (Booking booking : bookings) {
             System.out.println(String.format("%-10s %-20s %-10s %-12s %-12s",
                     booking.getBookingID(),
@@ -208,7 +208,6 @@ public class BookingList {
         }
         System.out.println(String.format("%-10s %-20s %-10s %-12s %-12s",
                 "Booking ID", "Full Name", "Tour ID", "Booking Date", "Phone"));
-        System.out.println("-".repeat(70));
         for (Booking booking : filtered) {
             System.out.println(String.format("%-10s %-20s %-10s %-12s %-12s",
                     booking.getBookingID(),
