@@ -87,54 +87,33 @@ public class HomeStayList {
             }
 
             /*
-             * File format (see Homestays.txt):
-             * HS0001-Alee DaLat Homestay-3-12A/6 3rd February Street, Ward 1, Da Lat City, Lam Dong Province-15
-             * ID - Name - Rooms - Address (may contain '-') - Capacity
+             * Dùng regex để parse để tránh lỗi vì dấu '-' trong address.
              *
-             * Because the address itself can contain '-' (e.g. "Sub-district"),
-             * we cannot safely rely on "lastIndexOf('-')" logic.
+             * Định dạng mong muốn (rất linh hoạt khoảng trắng):
+             *  HS0001-Name-3-Address-15
              *
-             * Safer approach:
-             *  - Split by "-" into ALL parts
-             *  - parts[0]  : ID
-             *  - parts[1]  : Name
-             *  - parts[2]  : Rooms (number)
-             *  - parts[n-1]: Capacity (number)
-             *  - parts[3..n-2]: join back as Address (with '-')
+             * Regex:
+             *  ^\s*(HS\d+)\s*-(.+?)\s*-(\d+)\s*-(.+)\s*-(\d+)\s*$
+             *  group 1: ID
+             *  group 2: Name
+             *  group 3: Rooms (số)
+             *  group 4: Address (cho phép mọi ký tự, kể cả '-')
+             *  group 5: Capacity (số)
              */
 
-            String[] parts = line.split("-");
-            if (parts.length < 5) { // must have at least ID, name, rooms, address, capacity
-                System.out.println(" Failed to parse (not enough parts): " + line);
+            Pattern p = Pattern.compile("^\\s*(HS\\d+)\\s*-(.+?)\\s*-(\\d+)\\s*-(.+)\\s*-(\\d+)\\s*$");
+            Matcher m = p.matcher(line);
+
+            if (!m.matches()) {
+                System.out.println(" Failed to parse line (regex not match): " + line);
                 return null;
             }
 
-            String homeID = parts[0].trim();
-            String homeName = parts[1].trim();
-
-            String roomStr = parts[2].trim();
-            if (!roomStr.matches("\\d+")) {
-                System.out.println(" Failed to parse rooms: " + line);
-                return null;
-            }
-            int roomNumber = Integer.parseInt(roomStr);
-
-            String capacityStr = parts[parts.length - 1].trim();
-            if (!capacityStr.matches("\\d+")) {
-                System.out.println(" Failed to parse capacity: " + line);
-                return null;
-            }
-            int maxCapacity = Integer.parseInt(capacityStr);
-
-            // Join middle parts as address (reinsert '-')
-            StringBuilder addressBuilder = new StringBuilder();
-            for (int i = 3; i < parts.length - 1; i++) {
-                if (i > 3) {
-                    addressBuilder.append("-");
-                }
-                addressBuilder.append(parts[i]);
-            }
-            String address = addressBuilder.toString().trim();
+            String homeID = m.group(1).trim();
+            String homeName = m.group(2).trim();
+            int roomNumber = Integer.parseInt(m.group(3).trim());
+            String address = m.group(4).trim();
+            int maxCapacity = Integer.parseInt(m.group(5).trim());
 
             System.out.println(" Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
             return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
