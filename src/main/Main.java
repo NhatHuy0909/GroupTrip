@@ -4,10 +4,15 @@
  */
 package main;
 
+import controller.MainController;
+
 /**
- *
+ * Main entry point for GroupTrip application
  * @author admin
  */
 public class Main {
-    
+    public static void main(String[] args) {
+        MainController controller = new MainController();
+        controller.run();
+    }
 }
