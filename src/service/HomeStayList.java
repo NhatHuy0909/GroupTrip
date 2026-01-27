@@ -54,14 +54,18 @@ public class HomeStayList {
      */
     private HomeStay parseHomeStay(String line) {
         try {
-            // Format: HS0001-Alee DaLat Homestay-3-Address-15
             String[] parts = line.split("-");
             if (parts.length >= 5) {
                 String homeID = parts[0].trim();
                 String homeName = parts[1].trim();
                 int roomNumber = Integer.parseInt(parts[2].trim());
-                String address = parts[3].trim();
                 int maxCapacity = Integer.parseInt(parts[parts.length - 1].trim());
+                StringBuilder addressBuilder = new StringBuilder();
+                for (int i = 3; i < parts.length - 1; i++) {
+                    if (i > 3) addressBuilder.append("-");
+                    addressBuilder.append(parts[i]);
+                }
+                String address = addressBuilder.toString().trim();
                 return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
             }
         } catch (Exception e) {
@@ -134,13 +138,10 @@ public class HomeStayList {
         
         for (HomeStay homeStay : homeStays) {
             int totalTourists = 0;
-            
-            // Get all bookings
-            for (Booking booking : bookingList.getAll()) {
-                // Get tour for this booking
+
+            for (Booking booking : bookingList.getAll()) {    
                 Tour tour = tourList.getTourByID(booking.getTourID());
-                
-                // Check if tour belongs to this homestay
+
                 if (tour != null && tour.getHomeID().equals(homeStay.getHomeID())) {
                     totalTourists += tour.getNumTourist();
                 }
