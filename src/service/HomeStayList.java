@@ -7,6 +7,7 @@ package service;
 import model.HomeStay;
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 import model.Booking;
 import model.Tour;
 
@@ -50,17 +51,21 @@ public class HomeStayList {
     }
 
     /**
-     * Parse a line into HomeStay object
+     * Parse a line into HomeStay object using regex
+     * Format: HS0001-Alee DaLat Homestay-3-Address...-15
      */
     private HomeStay parseHomeStay(String line) {
         try {
-            String[] parts = line.split("-");
-            if (parts.length == 5) {
-                String homeID = parts[0].trim();
-                String homeName = parts[1].trim();
-                int roomNumber = Integer.parseInt(parts[2].trim());
-                String address = parts[3].trim();
-                int maxCapacity = Integer.parseInt(parts[4].trim());
+            // Regex: ID-Name-RoomNumber(1-2 digits)-Address(can have dashes)-Capacity(1-2 digits)
+            Pattern pattern = Pattern.compile("^(HS\\d+)-(.+?)-(\\d+)-(.+)-(\\d{1,2})$");
+            Matcher matcher = pattern.matcher(line);
+            
+            if (matcher.matches()) {
+                String homeID = matcher.group(1).trim();
+                String homeName = matcher.group(2).trim();
+                int roomNumber = Integer.parseInt(matcher.group(3).trim());
+                String address = matcher.group(4).trim();
+                int maxCapacity = Integer.parseInt(matcher.group(5).trim());
                 return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
             }
         } catch (Exception e) {
