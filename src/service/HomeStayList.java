@@ -54,18 +54,19 @@ public class HomeStayList {
      */
     private HomeStay parseHomeStay(String line) {
         try {
-            int lastDashIndex = line.lastIndexOf("-");
-            int secondLastDashIndex = line.lastIndexOf("-", lastDashIndex - 1);
-            int thirdLastDashIndex = line.lastIndexOf("-", secondLastDashIndex - 1);
-            int firstDashIndex = line.indexOf("-");
-            int secondDashIndex = line.indexOf("-", firstDashIndex + 1);
-            
-            if (firstDashIndex > 0 && secondDashIndex > 0 && thirdLastDashIndex > 0 && lastDashIndex > 0) {
-                String homeID = line.substring(0, firstDashIndex).trim();
-                String homeName = line.substring(firstDashIndex + 1, secondDashIndex).trim();
-                int roomNumber = Integer.parseInt(line.substring(secondDashIndex + 1, thirdLastDashIndex).trim());
-                String address = line.substring(thirdLastDashIndex + 1, lastDashIndex).trim();
-                int maxCapacity = Integer.parseInt(line.substring(lastDashIndex + 1).trim());
+            String[] parts = line.split("-");
+            if (parts.length >= 5) {
+                String homeID = parts[0].trim();
+                String homeName = parts[1].trim();
+                int roomNumber = Integer.parseInt(parts[2].trim());
+                int maxCapacity = Integer.parseInt(parts[parts.length - 1].trim());
+                
+                StringBuilder addressBuilder = new StringBuilder();
+                for (int i = 3; i < parts.length - 1; i++) {
+                    if (i > 3) addressBuilder.append("-");
+                    addressBuilder.append(parts[i]);
+                }
+                String address = addressBuilder.toString().trim();
                 
                 return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
             }
