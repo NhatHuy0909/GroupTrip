@@ -51,9 +51,9 @@ public class HomeStayList {
     }
 
     /**
-     * Parse a line into HomeStay object using regex
+     * Parse a line into HomeStay object
      * Format: HS0001-Name-Rooms-Address-Capacity
-     * Note: Address can contain dashes (like "Sub-district")
+     * Parse from right to left to handle dashes in address (like Sub-district)
      */
     private HomeStay parseHomeStay(String line) {
         try {
@@ -62,24 +62,38 @@ public class HomeStayList {
                 return null;
             }
             
-            // Regex with negative lookahead: address is everything before the LAST dash+numbers
-            // This prevents "Sub-district" from being treated as a separator
-            Pattern pattern = Pattern.compile("^(HS\\d+)-(.+?)-(\\d+)-((?:(?!-\\d{1,2}$).)+)-(\\d{1,2})$");
-            Matcher matcher = pattern.matcher(line);
+            // Split only first 3 parts: ID, Name, rest
+            String[] parts = line.split("-", 3);
+            if (parts.length < 3) return null;
             
-            if (matcher.matches()) {
-                String homeID = matcher.group(1).trim();
-                String homeName = matcher.group(2).trim();
-                int roomNumber = Integer.parseInt(matcher.group(3).trim());
-                String address = matcher.group(4).trim();
-                int maxCapacity = Integer.parseInt(matcher.group(5).trim());
-                System.out.println("✓ Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
-                return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
-            } else {
-                System.out.println("✗ Failed to parse: " + line);
-            }
+            String homeID = parts[0].trim();
+            String homeName = parts[1].trim();
+            
+            // Now parse the rest from RIGHT to LEFT
+            String rest = parts[2];
+            int lastDash = rest.lastIndexOf('-');
+            if (lastDash == -1) return null;
+            
+            String capacityStr = rest.substring(lastDash + 1).trim();
+            if (!capacityStr.matches("\\d{1,2}")) return null;
+            int maxCapacity = Integer.parseInt(capacityStr);
+            
+            // Now get rooms and address from what's left
+            String beforeCapacity = rest.substring(0, lastDash);
+            int secondLastDash = beforeCapacity.lastIndexOf('-');
+            if (secondLastDash == -1) return null;
+            
+            String roomStr = beforeCapacity.substring(secondLastDash + 1).trim();
+            if (!roomStr.matches("\\d+")) return null;
+            int roomNumber = Integer.parseInt(roomStr);
+            
+            String address = beforeCapacity.substring(0, secondLastDash).trim();
+            
+            System.out.println(" Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
+            return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
+            
         } catch (Exception e) {
-            System.out.println("Error parsing line: " + line + " - " + e.getMessage());
+            System.out.println(" Failed to parse: " + line + " - " + e.getMessage());
         }
         return null;
     }
