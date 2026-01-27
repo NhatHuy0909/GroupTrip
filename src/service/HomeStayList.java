@@ -84,8 +84,10 @@ public class HomeStayList {
             if (line == null) return null;
 
             // Loại bỏ BOM nếu có (trường hợp file UTF-8 BOM)
-            if (line.startsWith("\uFEFF")) {
+            if (line.startsWith("\uFEFF")) {          // BOM chuẩn
                 line = line.substring(1);
+            } else if (line.startsWith("ï»¿")) {      // BOM bị đọc sai encoding (thành 3 ký tự)
+                line = line.substring(3);
             }
 
             line = line.trim();
