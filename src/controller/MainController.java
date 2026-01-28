@@ -280,7 +280,7 @@ public class MainController {
             System.out.println("Tour found:");
             System.out.println(String.format("%-8s %-20s %-15s %-8s %-8s %-12s %-12s %-8s",
                     "ID", "Tour", "Duration", "Price", "Home ID", "Start", "End", "Seats"));
-            System.out.println(String.format("%-8s %-20s %-15s %-8.0f %-8s %-12s %-12s %-8d",
+            System.out.println(String.format("%-8s %-20s %-15s %-8d %-8s %-12s %-12s %-8d",
                     tour.getTourID(), tour.getTourName(), tour.getTime(), tour.getPrice(),
                     tour.getHomeID(), DateUtils.formatDate(tour.getDepartureDate()),
                     DateUtils.formatDate(tour.getEndDate()), tour.getNumTourist()));
@@ -307,7 +307,7 @@ public class MainController {
         System.out.println(String.format("%-8s %-20s %-15s %-8s %-8s %-12s %-12s %-8s",
                 "ID", "Tour", "Duration", "Price", "Home ID", "Start", "End", "Seats"));
         for (Tour tour : earlierTours) {
-            System.out.println(String.format("%-8s %-20s %-15s %-8.0f %-8s %-12s %-12s %-8d",
+            System.out.println(String.format("%-8s %-20s %-15s %-8d %-8s %-12s %-12s %-8d",
                     tour.getTourID(), tour.getTourName(), tour.getTime(), tour.getPrice(),
                     tour.getHomeID(), DateUtils.formatDate(tour.getDepartureDate()),
                     DateUtils.formatDate(tour.getEndDate()), tour.getNumTourist()));
@@ -337,24 +337,24 @@ public class MainController {
         ArrayList<TourBookingAmount> tourAmounts = new ArrayList<>();
         for (Tour tour : laterTours) {
             int bookingCount = bookingList.getTotalBookingsForTour(tour.getTourID());
-            double totalAmount = tour.getPrice() * bookingCount;
+            int totalAmount = tour.getPrice() * bookingCount;
             tourAmounts.add(new TourBookingAmount(tour, bookingCount, totalAmount));
         }
 
         // Sort by total amount descending
-        tourAmounts.sort((a, b) -> Double.compare(b.totalAmount, a.totalAmount));
+        tourAmounts.sort((a, b) -> Integer.compare(b.totalAmount, a.totalAmount));
 
         // Display
-        double grandTotal = 0;
+        int grandTotal = 0;
         for (TourBookingAmount ta : tourAmounts) {
             Tour tour = ta.tour;
-            System.out.println(String.format("%-8s %-20s %-12s %-12.0f %-15d %-10.0f",
+            System.out.println(String.format("%-8s %-20s %-12s %-12d %-15d %-10d",
                     tour.getTourID(), tour.getTourName(),
                     DateUtils.formatDate(tour.getDepartureDate()),
                     tour.getPrice(), ta.bookingCount, ta.totalAmount));
             grandTotal += ta.totalAmount;
         }
-        System.out.println(String.format("%71s %-10.0f", "GRAND TOTAL:", grandTotal));
+        System.out.println(String.format("%71s %-10d", "GRAND TOTAL:", grandTotal));
     }
 
     /**
@@ -363,9 +363,9 @@ public class MainController {
     private static class TourBookingAmount {
         Tour tour;
         int bookingCount;
-        double totalAmount;
+        int totalAmount;
 
-        TourBookingAmount(Tour tour, int bookingCount, double totalAmount) {
+        TourBookingAmount(Tour tour, int bookingCount, int totalAmount) {
             this.tour = tour;
             this.bookingCount = bookingCount;
             this.totalAmount = totalAmount;

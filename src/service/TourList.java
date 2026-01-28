@@ -287,7 +287,7 @@ public class TourList {
         System.out.println(String.format("%-8s %-20s %-15s %-8s %-8s %-12s %-12s %-8s %-10s",
                 "ID", "Tour", "Duration", "Price", "Home ID", "Start", "End", "Seats", "Booking"));
         for (Tour tour : tours) {
-            System.out.println(String.format("%-8s %-20s %-15s %-8.0f %-8s %-12s %-12s %-8d %-10s",
+            System.out.println(String.format("%-8s %-20s %-15s %-8d %-8s %-12s %-12s %-8d %-10s",
                     tour.getTourID(),
                     tour.getTourName(),
                     tour.getTime(),
