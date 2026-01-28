@@ -106,18 +106,27 @@ public class HomeStayList {
              *   HS0001-Alee DaLat Homestay-3-12A/6 ...-15
              *   ID - Name - Rooms - Address - Capacity
              *
-             * Address có thể chứa dấu '-', nên ta dùng split với limit = 5
-             * để luôn thu được đúng 5 phần:
-             *   0: ID
-             *   1: Name
-             *   2: Rooms
-             *   3: Address (có thể còn '-')
-             *   4: Capacity
+             * Address có thể chứa rất nhiều dấu '-', ví dụ:
+             *   "Tay Tien Hill, Sub-district 12, Moc Chau, Son La Province"
+             *
+             * Chiến lược an toàn:
+             *  - Tách CAPACITY bằng dấu '-' CUỐI CÙNG (right to left)
+             *  - Với phần còn lại (ID-Name-Rooms-Address), tách từ trái sang:
+             *      split("-", 4) → [ID, Name, Rooms, Address]
              */
 
-            String[] parts = line.split("-", 5);
-            if (parts.length != 5) {
-                System.out.println(" Failed to parse line (parts != 5): " + line);
+            int lastDash = line.lastIndexOf('-');
+            if (lastDash == -1 || lastDash == line.length() - 1) {
+                System.out.println(" Failed to parse line (no last '-'): " + line);
+                return null;
+            }
+
+            String capacityStr = line.substring(lastDash + 1).trim();
+            String beforeCapacity = line.substring(0, lastDash);
+
+            String[] parts = beforeCapacity.split("-", 4);
+            if (parts.length != 4) {
+                System.out.println(" Failed to parse line (parts != 4 before capacity): " + line);
                 return null;
             }
 
@@ -125,7 +134,6 @@ public class HomeStayList {
             String homeName = parts[1].trim();
             String roomStr = parts[2].trim();
             String address = parts[3].trim();
-            String capacityStr = parts[4].trim();
 
             // Làm sạch chuỗi số: loại mọi ký tự không phải digit (xử lý luôn trường hợp file UTF-16 bị đọc sai thành "1 5", "1\u00005", ...)
             String roomDigits = roomStr.replaceAll("\\D", "");
