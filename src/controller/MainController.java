@@ -539,10 +539,61 @@ public class MainController {
         }
 
         System.out.println("Current Booking: " + booking);
-        String newName = Validation.getStringInput(scanner, "New Full Name (or press Enter to skip): ");
-        String newTourID = Validation.getStringInput(scanner, "New Tour ID (or press Enter to skip): ");
-        String dateStr = Validation.getStringInput(scanner, "New Booking Date (or press Enter to skip): ");
-        String newPhone = Validation.getStringInput(scanner, "New Phone (or press Enter to skip): ");
+
+        String newName;
+        while (true) {
+            newName = Validation.getStringInput(scanner, "New Full Name (or press Enter to skip): ");
+            if (!newName.isEmpty() && !Validation.isValidName(newName)) {
+                System.out.println("Invalid full name! Only letters and spaces allowed.");
+                continue;
+            }
+            break;
+        }
+
+        String newTourID;
+        Tour newTour = null;
+        while (true) {
+            newTourID = Validation.getStringInput(scanner, "New Tour ID (or press Enter to skip): ");
+            if (!newTourID.isEmpty()) {
+                newTour = tourList.getTourByID(newTourID);
+                if (newTour == null) {
+                    System.out.println("Tour ID does not exist!");
+                    continue;
+                }
+            }
+            break;
+        }
+
+        String dateStr;
+        while (true) {
+            dateStr = Validation.getStringInput(scanner, "New Booking Date (or press Enter to skip): ");
+            if (!dateStr.isEmpty()) {
+                if (!Validation.isValidDate(dateStr)) {
+                    System.out.println("Invalid date format! Please use dd/MM/yyyy");
+                    continue;
+                }
+                LocalDate newDate = Validation.parseDate(dateStr);
+                Tour targetTour = (newTour != null) ? newTour : tourList.getTourByID(booking.getTourID());
+                
+                if (newDate.isBefore(targetTour.getDepartureDate()) || newDate.isAfter(targetTour.getEndDate())) {
+                     System.out.println("Booking date must be within the tour duration (" 
+                        + untils.DateUtils.formatDate(targetTour.getDepartureDate()) + " - " 
+                        + untils.DateUtils.formatDate(targetTour.getEndDate()) + ")!");
+                    continue;
+                }
+            }
+            break;
+        }
+
+        String newPhone;
+        while (true) {
+            newPhone = Validation.getStringInput(scanner, "New Phone (or press Enter to skip): ");
+            if (!newPhone.isEmpty() && !Validation.isValidPhone(newPhone)) {
+                System.out.println("Invalid phone number! Must be exactly 10 digits.");
+                continue;
+            }
+            break;
+        }
 
         Booking updated = new Booking("",
                 newName.isEmpty() ? booking.getFullName() : newName,
@@ -551,6 +602,16 @@ public class MainController {
                 newPhone.isEmpty() ? booking.getPhone() : newPhone);
 
         bookingList.updateBooking(bookingID, updated);
+        
+        // Handle booking status update for tour if tour changed
+        if (!newTourID.isEmpty() && !newTourID.equals(booking.getTourID())) {
+            // Update old tour status if needed
+            if (bookingList.getTotalBookingsForTour(booking.getTourID()) == 0) {
+                tourList.updateTourBooking(booking.getTourID(), false);
+            }
+            // Update new tour status
+            tourList.updateTourBooking(newTourID, true);
+        }
     }
 
     /**
