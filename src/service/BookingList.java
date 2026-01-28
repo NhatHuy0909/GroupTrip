@@ -99,10 +99,7 @@ public class BookingList {
             return false;
         }
         Tour tour = tourList.getTourByID(booking.getTourID());
-        if (!Validation.isValidBookingDate(booking.getBookingDate(), tour.getDepartureDate())) {
-            System.out.println("Booking date must be before the departure date!");
-            return false;
-        }
+     
         bookings.add(booking);
         System.out.println("Booking added successfully!");
         return true;
