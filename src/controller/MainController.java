@@ -173,7 +173,32 @@ public class MainController {
         
         System.out.println("Available HomeStays:");
         homeStayList.displayAll();
-        String homeID = Validation.getStringInput(scanner, "Select HomeStay ID: ");
+        
+        String homeID;
+        int maxCapacity;
+        while (true) {
+            homeID = Validation.getStringInput(scanner, "Select HomeStay ID: ");
+            if (!homeStayList.homeStayExists(homeID)) {
+                System.out.println("HomeStay ID does not exist!");
+                continue;
+            }
+            maxCapacity = homeStayList.getHomeStayByID(homeID).getMaximumCapacity();
+            break;
+        }
+        
+        int numTourist;
+        while (true) {
+            numTourist = Validation.getIntInput(scanner, "Number of Tourists: ");
+            if (numTourist > maxCapacity) {
+                System.out.println("Number of tourists exceeds capacity (" + maxCapacity + ")!");
+                continue;
+            }
+            if (numTourist <= 0) {
+                System.out.println("Number of tourists must be positive!");
+                continue;
+            }
+            break;
+        }
 
         LocalDate departure;
         LocalDate end;
@@ -200,8 +225,6 @@ public class MainController {
             }
             break;
         }
-        
-        int numTourist = Validation.getIntInput(scanner, "Number of Tourists: ");
 
         Tour tour = new Tour(tourID, tourName, time, price, homeID, departure, end, numTourist, false);
         tourList.addTour(tour, homeStayList);
@@ -228,8 +251,8 @@ public class MainController {
                 int days = Integer.parseInt(dayMatcher.group(1));
                 int nights = Integer.parseInt(nightMatcher.group(1));
                 
-                if (nights != days - 1) {
-                    System.out.println("Error: " + days + " days should be " + (days - 1) + " nights, not " + nights + " nights!");
+                if (nights != days - 1 && nights != days) {
+                    System.out.println("Error: " + days + " days should be " + (days - 1) + " or " + days + " nights, not " + nights + " nights!");
                     return false;
                 }
                 return true;
