@@ -44,7 +44,6 @@ public class TourList {
                     }
                 }
             }
-            System.out.println("Loaded " + tours.size() + " tours from file.");
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + FILE_PATH);
         } catch (IOException e) {

@@ -47,7 +47,6 @@ public class BookingList {
                     }
                 }
             }
-            System.out.println("Loaded " + bookings.size() + " bookings from file.");
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + FILE_PATH);
         } catch (IOException e) {

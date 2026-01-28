@@ -44,7 +44,6 @@ public class HomeStayList {
             File f = new File(path);
             if (f.exists()) {
                 file = f;
-                System.out.println("Found file at: " + f.getAbsolutePath());
                 break;
             }
         }
@@ -66,7 +65,6 @@ public class HomeStayList {
                     }
                 }
             }
-            System.out.println("Loaded " + homeStays.size() + " homestays from file.");
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + FILE_PATH);
         } catch (IOException e) {
@@ -151,7 +149,6 @@ public class HomeStayList {
             int roomNumber = Integer.parseInt(roomDigits);
             int maxCapacity = Integer.parseInt(capacityDigits);
 
-            System.out.println(" Parsed: " + homeID + " | " + homeName + " | Rooms: " + roomNumber + " | Cap: " + maxCapacity);
             return new HomeStay(homeID, homeName, roomNumber, address, maxCapacity);
 
         } catch (Exception e) {
