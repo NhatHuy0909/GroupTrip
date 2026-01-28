@@ -160,19 +160,84 @@ public class MainController {
         System.out.println("Tour ID: " + tourID);
         
         String tourName = Validation.getStringInput(scanner, "Tour Name: ");
-        String time = Validation.getStringInput(scanner, "Duration (3 days 2 nights): ");
+        
+        String time;
+        while (true) {
+            time = Validation.getStringInput(scanner, "Duration (3 days 2 nights): ");
+            if (validateDuration(time)) {
+                break;
+            }
+        }
+        
         double price = Validation.getDoubleInput(scanner, "Price: ");
         
         System.out.println("Available HomeStays:");
         homeStayList.displayAll();
         String homeID = Validation.getStringInput(scanner, "Select HomeStay ID: ");
 
-        LocalDate departure = Validation.getDateInput(scanner, "Departure Date (dd/MM/yyyy): ");
-        LocalDate end = Validation.getDateInput(scanner, "End Date (dd/MM/yyyy): ");
+        LocalDate departure;
+        LocalDate end;
+        while (true) {
+            departure = Validation.getDateInput(scanner, "Departure Date (dd/MM/yyyy): ");
+            end = Validation.getDateInput(scanner, "End Date (dd/MM/yyyy): ");
+            
+            if (!departure.isBefore(end)) {
+                System.out.println("Error: Departure date must be before end date!");
+                continue;
+            }
+            
+            long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(departure, end);
+            String daysStr = extractDaysFromDuration(time);
+            if (daysStr != null) {
+                try {
+                    int expectedDays = Integer.parseInt(daysStr);
+                    if (daysBetween != expectedDays) {
+                        System.out.println("Error: Duration says " + expectedDays + " days, but date range is " + daysBetween + " days!");
+                        continue;
+                    }
+                } catch (NumberFormatException e) {
+                }
+            }
+            break;
+        }
+        
         int numTourist = Validation.getIntInput(scanner, "Number of Tourists: ");
 
         Tour tour = new Tour(tourID, tourName, time, price, homeID, departure, end, numTourist, false);
         tourList.addTour(tour, homeStayList);
+    }
+    
+    private String extractDaysFromDuration(String duration) {
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(\\d+)\\s*day");
+        java.util.regex.Matcher matcher = pattern.matcher(duration.toLowerCase());
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+    
+    private boolean validateDuration(String duration) {
+        java.util.regex.Pattern dayPattern = java.util.regex.Pattern.compile("(\\d+)\\s*day");
+        java.util.regex.Pattern nightPattern = java.util.regex.Pattern.compile("(\\d+)\\s*night");
+        
+        java.util.regex.Matcher dayMatcher = dayPattern.matcher(duration.toLowerCase());
+        java.util.regex.Matcher nightMatcher = nightPattern.matcher(duration.toLowerCase());
+        
+        if (dayMatcher.find() && nightMatcher.find()) {
+            try {
+                int days = Integer.parseInt(dayMatcher.group(1));
+                int nights = Integer.parseInt(nightMatcher.group(1));
+                
+                if (nights != days - 1) {
+                    System.out.println("Error: " + days + " days should be " + (days - 1) + " nights, not " + nights + " nights!");
+                    return false;
+                }
+                return true;
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        }
+        return true;
     }
 
     /**
