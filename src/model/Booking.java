@@ -64,7 +64,8 @@ public class Booking {
 
     @Override
     public String toString() {
-        return bookingID + "," + fullName + "," + tourID + "," + bookingDate + "," + phone;
+        return bookingID + "," + fullName + "," + tourID + "," 
+                + untils.DateUtils.formatDate(bookingDate) + "," + phone;
     }
 
     @Override
