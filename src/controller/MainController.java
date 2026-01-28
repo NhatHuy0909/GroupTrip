@@ -268,12 +268,17 @@ public class MainController {
      */
     private void updateTour() {
         System.out.println("\n===== UPDATE TOUR =====");
-        String tourID = Validation.getStringInput(scanner, "Enter Tour ID: ");
-        Tour tour = tourList.getTourByID(tourID);
-
-        if (tour == null) {
-            System.out.println("This tour does not exist!");
-            return;
+        
+        String tourID;
+        Tour tour;
+        while (true) {
+            tourID = Validation.getStringInput(scanner, "Enter Tour ID: ");
+            tour = tourList.getTourByID(tourID);
+            if (tour == null) {
+                System.out.println("This tour does not exist!");
+                continue;
+            }
+            break;
         }
 
         System.out.println("Current Tour Info: " + tour);
