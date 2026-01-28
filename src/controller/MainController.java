@@ -460,14 +460,51 @@ public class MainController {
         String bookingID = bookingList.generateNextBookingID();
         System.out.println("Booking ID (auto-generated): " + bookingID);
         
-        String fullName = Validation.getStringInput(scanner, "Full Name: ");
+        String fullName;
+        while (true) {
+            fullName = Validation.getStringInput(scanner, "Full Name: ");
+            if (!Validation.isValidName(fullName)) {
+                System.out.println("Invalid full name! Only letters and spaces allowed.");
+                continue;
+            }
+            break;
+        }
         
         System.out.println("Available Tours:");
         tourList.displayAll();
-        String tourID = Validation.getStringInput(scanner, "Select Tour ID: ");
+        
+        String tourID;
+        Tour selectedTour;
+        while (true) {
+            tourID = Validation.getStringInput(scanner, "Select Tour ID: ");
+            selectedTour = tourList.getTourByID(tourID);
+            if (selectedTour == null) {
+                System.out.println("Tour ID does not exist!");
+                continue;
+            }
+            break;
+        }
 
-        LocalDate bookingDate = Validation.getDateInput(scanner, "Booking Date (dd/MM/yyyy): ");
-        String phone = Validation.getStringInput(scanner, "Phone Number (10 digits): ");
+        LocalDate bookingDate;
+        while (true) {
+            bookingDate = Validation.getDateInput(scanner, "Booking Date (dd/MM/yyyy): ");
+            if (!bookingDate.isBefore(selectedTour.getDepartureDate())) {
+                System.out.println("Booking date must be before departure date (" 
+                    + untils.DateUtils.formatDate(selectedTour.getDepartureDate()) + ")!");
+                continue;
+            }
+            break;
+        }
+        
+        String phone;
+        while (true) {
+            phone = Validation.getStringInput(scanner, "Phone Number (10 digits): ");
+            if (!Validation.isValidPhone(phone)) {
+                System.out.println("Invalid phone number! Must be exactly 10 digits.");
+                continue;
+            }
+            break;
+        }
 
         Booking booking = new Booking(bookingID, fullName, tourID, bookingDate, phone);
         if (bookingList.addBooking(booking, tourList)) {
