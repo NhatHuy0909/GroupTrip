@@ -525,12 +525,17 @@ public class MainController {
      */
     private void updateBooking() {
         System.out.println("\n===== UPDATE BOOKING =====");
-        String bookingID = Validation.getStringInput(scanner, "Enter Booking ID: ");
-        Booking booking = bookingList.getBookingByID(bookingID);
-
-        if (booking == null) {
-            System.out.println("This Booking does not exist!");
-            return;
+        
+        String bookingID;
+        Booking booking;
+        while (true) {
+            bookingID = Validation.getStringInput(scanner, "Enter Booking ID: ");
+            booking = bookingList.getBookingByID(bookingID);
+            if (booking == null) {
+                System.out.println("This Booking does not exist!");
+                continue;
+            }
+            break;
         }
 
         System.out.println("Current Booking: " + booking);
