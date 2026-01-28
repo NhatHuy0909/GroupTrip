@@ -488,9 +488,11 @@ public class MainController {
         LocalDate bookingDate;
         while (true) {
             bookingDate = Validation.getDateInput(scanner, "Booking Date (dd/MM/yyyy): ");
-            if (!bookingDate.isBefore(selectedTour.getDepartureDate())) {
-                System.out.println("Booking date must be before departure date (" 
-                    + untils.DateUtils.formatDate(selectedTour.getDepartureDate()) + ")!");
+            
+            if (bookingDate.isBefore(selectedTour.getDepartureDate()) || bookingDate.isAfter(selectedTour.getEndDate())) {
+                System.out.println("Booking date must be within the tour duration (" 
+                    + untils.DateUtils.formatDate(selectedTour.getDepartureDate()) + " - " 
+                    + untils.DateUtils.formatDate(selectedTour.getEndDate()) + ")!");
                 continue;
             }
             break;
