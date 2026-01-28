@@ -106,7 +106,7 @@ public class Tour {
     @Override
     public String toString() {
         return tourID + "," + tourName + "," + time + "," + price + "," + homeID + ","
-                + departureDate + "," + endDate + "," + numTourist + "," + booking;
+                + untils.DateUtils.formatDate(departureDate) + "," + untils.DateUtils.formatDate(endDate) + "," + numTourist + "," + booking;
     }
 
     @Override
