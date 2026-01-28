@@ -15,14 +15,14 @@ public class Tour {
     private String tourID;          // T00001
     private String tourName;        // TPHCM-Da Lat
     private String time;            // 3 days 2 nights
-    private double price;           // 300.0
+    private int price;              // 300
     private String homeID;          // HS0001
     private LocalDate departureDate;  // 10/01/2026
     private LocalDate endDate;        // 12/01/2026
     private int numTourist;         // Available seats
     private boolean booking;        // FALSE/TRUE
 
-    public Tour(String tourID, String tourName, String time, double price, String homeID,
+    public Tour(String tourID, String tourName, String time, int price, String homeID,
                 LocalDate departureDate, LocalDate endDate, int numTourist, boolean booking) {
         this.tourID = tourID;
         this.tourName = tourName;
@@ -47,7 +47,7 @@ public class Tour {
         return time;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
@@ -79,7 +79,7 @@ public class Tour {
         this.time = time;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

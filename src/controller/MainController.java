@@ -169,7 +169,7 @@ public class MainController {
             }
         }
         
-        double price = Validation.getDoubleInput(scanner, "Price: ");
+        int price = Validation.getIntInput(scanner, "Price: ");
         
         System.out.println("Available HomeStays:");
         homeStayList.displayAll();
@@ -261,7 +261,7 @@ public class MainController {
 
         Tour updated = new Tour("", newName.isEmpty() ? tour.getTourName() : newName,
                 newTime.isEmpty() ? tour.getTime() : newTime,
-                priceStr.isEmpty() ? tour.getPrice() : Double.parseDouble(priceStr),
+                priceStr.isEmpty() ? tour.getPrice() : Integer.parseInt(priceStr),
                 tour.getHomeID(), tour.getDepartureDate(), tour.getEndDate(),
                 numStr.isEmpty() ? tour.getNumTourist() : Integer.parseInt(numStr), tour.isBooking());
 

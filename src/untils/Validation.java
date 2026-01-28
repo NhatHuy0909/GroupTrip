@@ -101,7 +101,7 @@ public class Validation {
     /**
      * Validate price (positive number)
      */
-    public static boolean isValidPrice(double price) {
+    public static boolean isValidPrice(int price) {
         return price > 0;
     }
 

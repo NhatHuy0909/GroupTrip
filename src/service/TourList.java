@@ -73,7 +73,7 @@ public class TourList {
                 String tourID = parts[0].trim();
                 String tourName = parts[1].trim();
                 String time = parts[2].trim();
-                double price = Double.parseDouble(parts[3].trim());
+                int price = Integer.parseInt(parts[3].trim());
                 String homeID = parts[4].trim();
                 LocalDate departure = Validation.parseDate(parts[5].trim());
                 LocalDate end = Validation.parseDate(parts[6].trim());
