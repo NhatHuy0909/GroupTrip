@@ -319,7 +319,8 @@ public class TourList {
      * Save all tours to file
      */
     public void saveToFile() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH, java.nio.charset.StandardCharsets.UTF_8))) {
+        try (PrintWriter pw = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(FILE_PATH), "UTF-8"))) {
             for (Tour tour : tours) {
                 pw.println(tour);
             }
