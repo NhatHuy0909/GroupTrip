@@ -20,11 +20,13 @@ public class TourList {
     private ArrayList<Tour> tours;
     private final String FILE_PATH = "Tours.txt";
     private HomeStayList homeStayList;
+    private int nextTourNumber;
 
     // Constructor
     public TourList(HomeStayList homeStayList) {
         this.tours = new ArrayList<>();
         this.homeStayList = homeStayList;
+        this.nextTourNumber = 1;
         loadFromFile();
     }
 
@@ -41,6 +43,16 @@ public class TourList {
                     Tour tour = parseTour(line);
                     if (tour != null) {
                         tours.add(tour);
+                        try {
+                            String idNumber = tour.getTourID().replaceAll("[^0-9]", "");
+                            if (!idNumber.isEmpty()) {
+                                int num = Integer.parseInt(idNumber);
+                                if (num >= nextTourNumber) {
+                                    nextTourNumber = num + 1;
+                                }
+                            }
+                        } catch (NumberFormatException e) {
+                        }
                     }
                 }
             }
@@ -74,6 +86,15 @@ public class TourList {
             System.out.println("Error parsing line: " + line);
         }
         return null;
+    }
+
+    /**
+     * Generate next tour ID in format T00001
+     */
+    public String generateNextTourID() {
+        String nextID = String.format("T%05d", nextTourNumber);
+        nextTourNumber++;
+        return nextID;
     }
 
     /**

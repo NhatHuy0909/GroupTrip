@@ -156,7 +156,9 @@ public class MainController {
      */
     private void addNewTour() {
         System.out.println("\n===== ADD NEW TOUR =====");
-        String tourID = Validation.getStringInput(scanner, "Tour ID (T00001): ");
+        String tourID = tourList.generateNextTourID();
+        System.out.println("Tour ID: " + tourID);
+        
         String tourName = Validation.getStringInput(scanner, "Tour Name: ");
         String time = Validation.getStringInput(scanner, "Duration (3 days 2 nights): ");
         double price = Validation.getDoubleInput(scanner, "Price: ");
