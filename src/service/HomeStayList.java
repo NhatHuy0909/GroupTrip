@@ -16,7 +16,7 @@ import model.Tour;
  * Pattern: List management with file I/O
  * @author admin
  */
-public class HomeStayList {
+public class HomeStayList implements IService<HomeStay> {
     private ArrayList<HomeStay> homeStays;
     private final String FILE_PATH = "Homestays.txt";
 
@@ -30,6 +30,7 @@ public class HomeStayList {
      * Load homestays from file
      * Format: HS0001-Alee DaLat Homestay-3-Address-15
      */
+    @Override
     public void loadFromFile() {
         // Try multiple paths
         File file = null;
@@ -160,7 +161,8 @@ public class HomeStayList {
     /**
      * Get HomeStay by ID
      */
-    public HomeStay getHomeStayByID(String homeID) {
+    @Override
+    public HomeStay getByID(String homeID) {
         for (HomeStay hs : homeStays) {
             if (hs.getHomeID().equals(homeID)) {
                 return hs;
@@ -173,14 +175,63 @@ public class HomeStayList {
      * Check if HomeStay exists
      */
     public boolean homeStayExists(String homeID) {
-        return getHomeStayByID(homeID) != null;
+        return getByID(homeID) != null;
     }
 
     /**
      * Get all homestays
      */
+    @Override
     public ArrayList<HomeStay> getAll() {
         return new ArrayList<>(homeStays);
+    }
+    
+    @Override
+    public boolean add(HomeStay item) {
+        if (getByID(item.getHomeID()) != null) {
+            System.out.println("HomeStay ID already exists!");
+            return false;
+        }
+        homeStays.add(item);
+        return true;
+    }
+
+    @Override
+    public boolean update(String id, HomeStay item) {
+        HomeStay hs = getByID(id);
+        if (hs == null) {
+            System.out.println("HomeStay not found!");
+            return false;
+        }
+        hs.setHomeName(item.getHomeName());
+        hs.setRoomNumber(item.getRoomNumber());
+        hs.setAddress(item.getAddress());
+        hs.setMaximumCapacity(item.getMaximumCapacity());
+        return true;
+    }
+
+    @Override
+    public boolean delete(String id) {
+        HomeStay hs = getByID(id);
+        if (hs != null) {
+            homeStays.remove(hs);
+            return true;
+        }
+        System.out.println("HomeStay not found!");
+        return false;
+    }
+
+    @Override
+    public void saveToFile() {
+        try (PrintWriter pw = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(FILE_PATH), "UTF-8"))) {
+            for (HomeStay hs : homeStays) {
+                pw.println(hs.toString()); // Ensure toString matches file format
+            }
+            System.out.println("HomeStays saved successfully!");
+        } catch (IOException e) {
+            System.out.println("Error saving homestays: " + e.getMessage());
+        }
     }
 
     /**
@@ -228,7 +279,7 @@ public class HomeStayList {
             int totalTourists = 0;
 
             for (Booking booking : bookingList.getAll()) {    
-                Tour tour = tourList.getTourByID(booking.getTourID());
+                Tour tour = tourList.getByID(booking.getTourID()); // Updated linkage method call from refactor plan
 
                 if (tour != null && tour.getHomeID().equals(homeStay.getHomeID())) {
                     totalTourists += tour.getNumTourist();

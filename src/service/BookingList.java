@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.*;
 import model.Tour;
 
-public class BookingList {
+public class BookingList implements IService<Booking> {
     private ArrayList<Booking> bookings;
     private final String FILE_PATH = "Bookings.txt";
     private TourList tourList;
@@ -25,6 +25,7 @@ public class BookingList {
         loadFromFile();
     }
 
+    @Override
     public void loadFromFile() {
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -77,12 +78,13 @@ public class BookingList {
         return nextID;
     }
 
-    public boolean addBooking(Booking booking, TourList tourList) {
+    @Override
+    public boolean add(Booking booking) {
         if (!Validation.isValidBookingID(booking.getBookingID())) {
             System.out.println("Invalid Booking ID format!");
             return false;
         }
-        if (getBookingByID(booking.getBookingID()) != null) {
+        if (getByID(booking.getBookingID()) != null) {
             System.out.println("Booking ID already exists!");
             return false;
         }
@@ -94,18 +96,17 @@ public class BookingList {
             System.out.println("Invalid phone number (must be 10 digits)!");
             return false;
         }
-        if (tourList.getTourByID(booking.getTourID()) == null) {
+        if (tourList.getByID(booking.getTourID()) == null) {
             System.out.println("Tour ID does not exist!");
             return false;
         }
-        Tour tour = tourList.getTourByID(booking.getTourID());
-     
         bookings.add(booking);
         System.out.println("Booking added successfully!");
         return true;
     }
 
-    public Booking getBookingByID(String bookingID) {
+    @Override
+    public Booking getByID(String bookingID) {
         for (Booking booking : bookings) {
             if (booking.getBookingID().equals(bookingID)) {
                 return booking;
@@ -114,8 +115,9 @@ public class BookingList {
         return null;
     }
 
-    public boolean updateBooking(String bookingID, Booking updatedBooking) {
-        Booking booking = getBookingByID(bookingID);
+    @Override
+    public boolean update(String bookingID, Booking updatedBooking) {
+        Booking booking = getByID(bookingID);
         if (booking == null) {
             System.out.println("Booking not found!");
             return false;
@@ -128,14 +130,14 @@ public class BookingList {
             booking.setFullName(updatedBooking.getFullName());
         }
         if (updatedBooking.getTourID() != null && !updatedBooking.getTourID().isEmpty()) {
-            if (tourList.getTourByID(updatedBooking.getTourID()) == null) {
+            if (tourList.getByID(updatedBooking.getTourID()) == null) {
                 System.out.println("Tour ID does not exist!");
                 return false;
             }
             booking.setTourID(updatedBooking.getTourID());
         }
         if (updatedBooking.getBookingDate() != null) {
-            Tour tour = tourList.getTourByID(booking.getTourID());
+            Tour tour = tourList.getByID(booking.getTourID());
             if (!Validation.isValidBookingDate(updatedBooking.getBookingDate(), tour.getDepartureDate())) {
                 System.out.println("Booking date must be before the departure date!");
                 return false;
@@ -153,8 +155,9 @@ public class BookingList {
         return true;
     }
 
-    public boolean deleteBooking(String bookingID) {
-        Booking booking = getBookingByID(bookingID);
+    @Override
+    public boolean delete(String bookingID) {
+        Booking booking = getByID(bookingID);
         if (booking != null) {
             bookings.remove(booking);
             System.out.println("Booking deleted successfully!");
@@ -164,6 +167,7 @@ public class BookingList {
         return false;
     }
 
+    @Override
     public ArrayList<Booking> getAll() {
         return new ArrayList<>(bookings);
     }
@@ -229,6 +233,7 @@ public class BookingList {
         return tourPrice * bookingCount;
     }
 
+    @Override
     public void saveToFile() {
         try (PrintWriter pw = new PrintWriter(
                 new OutputStreamWriter(new FileOutputStream(FILE_PATH), "UTF-8"))) {

@@ -16,7 +16,7 @@ import java.util.*;
  * Pattern: Template pattern for CRUD operations
  * @author admin
  */
-public class TourList {
+public class TourList implements IService<Tour> {
     private ArrayList<Tour> tours;
     private final String FILE_PATH = "Tours.txt";
     private HomeStayList homeStayList;
@@ -34,6 +34,7 @@ public class TourList {
      * Load tours from file
      * Format: T00001,TPHCM-Da Lat,3 days 2 nights,300,HS0001,10/01/2026,12/01/2026,5,FALSE
      */
+    @Override
     public void loadFromFile() {
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -101,13 +102,14 @@ public class TourList {
      * Create - Add new tour with validations
      * Algorithm: Input → Validate → Check homeID → Check capacity → Check schedule → Add
      */
-    public boolean addTour(Tour tour, HomeStayList homeStayList) {
+    @Override
+    public boolean add(Tour tour) {
         // Validate basic fields
         if (!Validation.isValidTourID(tour.getTourID())) {
             System.out.println("Invalid Tour ID format!");
             return false;
         }
-        if (getTourByID(tour.getTourID()) != null) {
+        if (getByID(tour.getTourID()) != null) {
             System.out.println("Tour ID already exists!");
             return false;
         }
@@ -139,7 +141,7 @@ public class TourList {
         }
 
         // Check capacity
-        int maxCapacity = homeStayList.getHomeStayByID(tour.getHomeID()).getMaximumCapacity();
+        int maxCapacity = homeStayList.getByID(tour.getHomeID()).getMaximumCapacity();
         if (tour.getNumTourist() > maxCapacity) {
             System.out.println("Number of tourists exceeds capacity (" + maxCapacity + ")!");
             return false;
@@ -159,7 +161,8 @@ public class TourList {
     /**
      * Read - Get tour by ID
      */
-    public Tour getTourByID(String tourID) {
+    @Override
+    public Tour getByID(String tourID) {
         for (Tour tour : tours) {
             if (tour.getTourID().equals(tourID)) {
                 return tour;
@@ -171,8 +174,9 @@ public class TourList {
     /**
      * Update - Update existing tour
      */
-    public boolean updateTour(String tourID, Tour updatedTour) {
-        Tour tour = getTourByID(tourID);
+    @Override
+    public boolean update(String tourID, Tour updatedTour) {
+        Tour tour = getByID(tourID);
         if (tour == null) {
             System.out.println("Tour not found!");
             return false;
@@ -201,7 +205,7 @@ public class TourList {
      * Used when booking is added or deleted
      */
     public boolean updateTourBooking(String tourID, boolean booking) {
-        Tour tour = getTourByID(tourID);
+        Tour tour = getByID(tourID);
         if (tour != null) {
             tour.setBooking(booking);
             return true;
@@ -212,8 +216,9 @@ public class TourList {
     /**
      * Delete - Remove tour by ID
      */
-    public boolean deleteTour(String tourID) {
-        Tour tour = getTourByID(tourID);
+    @Override
+    public boolean delete(String tourID) {
+        Tour tour = getByID(tourID);
         if (tour != null) {
             tours.remove(tour);
             System.out.println("Tour deleted successfully!");
@@ -226,6 +231,7 @@ public class TourList {
     /**
      * Get all tours
      */
+    @Override
     public ArrayList<Tour> getAll() {
         return new ArrayList<>(tours);
     }
@@ -318,6 +324,7 @@ public class TourList {
     /**
      * Save all tours to file
      */
+    @Override
     public void saveToFile() {
         try (PrintWriter pw = new PrintWriter(
                 new OutputStreamWriter(new FileOutputStream(FILE_PATH), "UTF-8"))) {

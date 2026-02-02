@@ -182,7 +182,7 @@ public class MainController {
                 System.out.println("HomeStay ID does not exist!");
                 continue;
             }
-            maxCapacity = homeStayList.getHomeStayByID(homeID).getMaximumCapacity();
+            maxCapacity = homeStayList.getByID(homeID).getMaximumCapacity();
             break;
         }
         
@@ -227,7 +227,7 @@ public class MainController {
         }
 
         Tour tour = new Tour(tourID, tourName, time, price, homeID, departure, end, numTourist, false);
-        tourList.addTour(tour, homeStayList);
+        tourList.add(tour);
     }
     
     private String extractDaysFromDuration(String duration) {
@@ -273,7 +273,7 @@ public class MainController {
         Tour tour;
         while (true) {
             tourID = Validation.getStringInput(scanner, "Enter Tour ID: ");
-            tour = tourList.getTourByID(tourID);
+            tour = tourList.getByID(tourID);
             if (tour == null) {
                 System.out.println("This tour does not exist!");
                 continue;
@@ -293,7 +293,7 @@ public class MainController {
                 tour.getHomeID(), tour.getDepartureDate(), tour.getEndDate(),
                 numStr.isEmpty() ? tour.getNumTourist() : Integer.parseInt(numStr), tour.isBooking());
 
-        tourList.updateTour(tourID, updated);
+        tourList.update(tourID, updated);
     }
 
     /**
@@ -302,7 +302,7 @@ public class MainController {
     private void searchTourByID() {
         System.out.println("\n===== SEARCH TOUR =====");
         String tourID = Validation.getStringInput(scanner, "Enter Tour ID: ");
-        Tour tour = tourList.getTourByID(tourID);
+        Tour tour = tourList.getByID(tourID);
 
         if (tour != null) {
             System.out.println("Tour found:");
@@ -482,7 +482,7 @@ public class MainController {
         Tour selectedTour;
         while (true) {
             tourID = Validation.getStringInput(scanner, "Select Tour ID: ");
-            selectedTour = tourList.getTourByID(tourID);
+            selectedTour = tourList.getByID(tourID);
             if (selectedTour == null) {
                 System.out.println("Tour ID does not exist!");
                 continue;
@@ -514,7 +514,7 @@ public class MainController {
         }
 
         Booking booking = new Booking(bookingID, fullName, tourID, bookingDate, phone);
-        if (bookingList.addBooking(booking, tourList)) {
+        if (bookingList.add(booking)) {
             // Requirement 6: Update tour booking field to true
             tourList.updateTourBooking(tourID, true);
         }
@@ -530,7 +530,7 @@ public class MainController {
         Booking booking;
         while (true) {
             bookingID = Validation.getStringInput(scanner, "Enter Booking ID: ");
-            booking = bookingList.getBookingByID(bookingID);
+            booking = bookingList.getByID(bookingID);
             if (booking == null) {
                 System.out.println("This Booking does not exist!");
                 continue;
@@ -555,7 +555,7 @@ public class MainController {
         while (true) {
             newTourID = Validation.getStringInput(scanner, "New Tour ID (or press Enter to skip): ");
             if (!newTourID.isEmpty()) {
-                newTour = tourList.getTourByID(newTourID);
+                newTour = tourList.getByID(newTourID);
                 if (newTour == null) {
                     System.out.println("Tour ID does not exist!");
                     continue;
@@ -573,7 +573,7 @@ public class MainController {
                     continue;
                 }
                 LocalDate newDate = Validation.parseDate(dateStr);
-                Tour targetTour = (newTour != null) ? newTour : tourList.getTourByID(booking.getTourID());
+                Tour targetTour = (newTour != null) ? newTour : tourList.getByID(booking.getTourID());
                 
                 if (newDate.isBefore(targetTour.getDepartureDate()) || newDate.isAfter(targetTour.getEndDate())) {
                      System.out.println("Booking date must be within the tour duration (" 
@@ -601,7 +601,7 @@ public class MainController {
                 dateStr.isEmpty() ? booking.getBookingDate() : Validation.parseDate(dateStr),
                 newPhone.isEmpty() ? booking.getPhone() : newPhone);
 
-        bookingList.updateBooking(bookingID, updated);
+        bookingList.update(bookingID, updated);
         
         // Handle booking status update for tour if tour changed
         if (!newTourID.isEmpty() && !newTourID.equals(booking.getTourID())) {
@@ -622,14 +622,14 @@ public class MainController {
         String bookingID = Validation.getStringInput(scanner, "Enter Booking ID: ");
         
         // Requirement 8: Check if booking exists and handle tour field update
-        Booking booking = bookingList.getBookingByID(bookingID);
+        Booking booking = bookingList.getByID(bookingID);
         if (booking == null) {
             System.out.println("This booking does not exist!");
             return;
         }
         
         String tourID = booking.getTourID();
-        if (bookingList.deleteBooking(bookingID)) {
+        if (bookingList.delete(bookingID)) {
             // Check if there are remaining bookings for this tour
             if (bookingList.getTotalBookingsForTour(tourID) == 0) {
                 tourList.updateTourBooking(tourID, false);
@@ -643,7 +643,7 @@ public class MainController {
     private void searchBookingByID() {
         System.out.println("\n===== SEARCH BOOKING =====");
         String bookingID = Validation.getStringInput(scanner, "Enter Booking ID: ");
-        Booking booking = bookingList.getBookingByID(bookingID);
+        Booking booking = bookingList.getByID(bookingID);
 
         if (booking != null) {
             System.out.println("Booking found:");
