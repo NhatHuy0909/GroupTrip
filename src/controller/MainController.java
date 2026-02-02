@@ -244,8 +244,8 @@ public class MainController {
     }
     
     private boolean validateDuration(String duration) {
-        java.util.regex.Pattern dayPattern = java.util.regex.Pattern.compile("(\\d+)\\s*day");
-        java.util.regex.Pattern nightPattern = java.util.regex.Pattern.compile("(\\d+)\\s*night");
+        java.util.regex.Pattern dayPattern = java.util.regex.Pattern.compile("(-?\\d+)\\s*day");
+        java.util.regex.Pattern nightPattern = java.util.regex.Pattern.compile("(-?\\d+)\\s*night");
         
         java.util.regex.Matcher dayMatcher = dayPattern.matcher(duration.toLowerCase());
         java.util.regex.Matcher nightMatcher = nightPattern.matcher(duration.toLowerCase());
@@ -254,6 +254,16 @@ public class MainController {
             try {
                 int days = Integer.parseInt(dayMatcher.group(1));
                 int nights = Integer.parseInt(nightMatcher.group(1));
+                
+                if (days <= 0) {
+                    System.out.println("Error: Number of days must be positive!");
+                    return false;
+                }
+                
+                if (nights < 0) {
+                    System.out.println("Error: Number of nights cannot be negative!");
+                    return false;
+                }
                 
                 if (nights != days - 1 && nights != days) {
                     System.out.println("Error: " + days + " days should be " + (days - 1) + " or " + days + " nights, not " + nights + " nights!");
