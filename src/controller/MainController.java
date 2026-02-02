@@ -288,7 +288,17 @@ public class MainController {
 
         System.out.println("Current Tour Info: " + tour);
         String newName = Validation.getStringInput(scanner, "New Tour Name (or press Enter to skip): ");
-        String newTime = Validation.getStringInput(scanner, "New Duration (or press Enter to skip): ");
+        
+        String newTime;
+        while (true) {
+            newTime = Validation.getStringInput(scanner, "New Duration (or press Enter to skip): ");
+            if (newTime.isEmpty()) {
+                break;
+            }
+            if (validateDuration(newTime)) {
+                break;
+            }
+        }
         String priceStr = Validation.getStringInput(scanner, "New Price (or press Enter to skip): ");
         String numStr = Validation.getStringInput(scanner, "New Number of Tourists (or press Enter to skip): ");
 
