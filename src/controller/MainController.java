@@ -111,7 +111,8 @@ public class MainController {
             System.out.println("4. Search Tour by ID");
             System.out.println("5. List tours with departure date earlier than current");
             System.out.println("6. List total booking amount for tours departing later");
-            System.out.println("7. Back to Main Menu");
+            System.out.println("7. Save Tours to File");
+            System.out.println("8. Back to Main Menu");
             System.out.println("==============================");
 
             choice = Validation.getIntInput(scanner, "Enter your choice: ");
@@ -135,6 +136,9 @@ public class MainController {
                     listTotalBookingAmountForLaterTours();
                     break;
                 case 7:
+                    tourList.saveToFile();
+                    break;
+                case 8:
                     return;
                 default:
                     System.out.println("Invalid choice!");
@@ -414,7 +418,8 @@ public class MainController {
             System.out.println("5. Search Booking by ID");
             System.out.println("6. Filter Bookings by Full Name");
             System.out.println("7. Statistics on tourists who booked homestays");
-            System.out.println("8. Back to Main Menu");
+            System.out.println("8. Save Bookings to File");
+            System.out.println("9. Back to Main Menu");
             System.out.println("=================================");
 
             choice = Validation.getIntInput(scanner, "Enter your choice: ");
@@ -441,6 +446,9 @@ public class MainController {
                     showTouristStatistics();
                     break;
                 case 8:
+                    bookingList.saveToFile();
+                    break;
+                case 9:
                     return;
                 default:
                     System.out.println("Invalid choice!");
