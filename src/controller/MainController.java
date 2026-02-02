@@ -261,10 +261,11 @@ public class MainController {
                 }
                 return true;
             } catch (NumberFormatException e) {
-                return true;
+                return false;
             }
         }
-        return true;
+        System.out.println("Invalid format! Please use format like '3 days 2 nights'");
+        return false;
     }
 
     /**
